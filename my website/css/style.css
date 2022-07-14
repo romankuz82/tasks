@@ -1,0 +1,17 @@
+body {
+	width: 60%;
+	margin-left: 20%;
+	background-color: bisque;
+	font-family: Arial, Helvetica, sans-serif;
+}
+
+img {
+	height: 200px;
+}
+
+.resume-text {
+	color:rgb(8, 8, 8);
+}
+.picture {
+	margin-left: 30%;
+}
