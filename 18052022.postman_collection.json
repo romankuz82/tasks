@@ -1,0 +1,372 @@
+{
+	"info": {
+		"_postman_id": "b64b98de-a12b-42b3-9e06-643cfed43f98",
+		"name": "18052022",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "20871416"
+	},
+	"item": [
+		{
+			"name": "CreateUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check Role is Student\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"\r",
+							"    pm.collectionVariables.set(\"USERID\", jsonData.id);\r",
+							"    pm.collectionVariables.set(\"USERNAME\", jsonData.name);\r",
+							"    pm.collectionVariables.set(\"USERPHONE\", jsonData.phone);\r",
+							"\r",
+							"    pm.expect(jsonData.role).to.eql(\"Student\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\": \"{{$guid}}\",\r\n    \"phone\": \"{{$timestamp}}\",\r\n    \"role\": \"Student\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://151.80.70.42:3000/api/users",
+					"protocol": "http",
+					"host": [
+						"151",
+						"80",
+						"70",
+						"42"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetUsersAfterCreate",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							" //   pm.expect(pm.response.code).to.equal(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check response body is array\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.an(\"array\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check user was created\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    console.log('--------------------')\r",
+							"    var id = pm.collectionVariables.get(\"USERID\");\r",
+							"    var name = pm.collectionVariables.get(\"USERNAME\");\r",
+							"    var phone = pm.collectionVariables.get(\"USERPHONE\");\r",
+							"    console.log(id)\r",
+							"    console.log(name)\r",
+							"    console.log(phone)\r",
+							"    var isFound = false\r",
+							"    for (var i = 0; i < jsonData.length; i = i + 1) {\r",
+							"        // console.log(jsonData[i].id)\r",
+							"        if (jsonData[i].id == id && jsonData[i].name == name && jsonData[i].phone == phone) {\r",
+							"            isFound = true\r",
+							"        }\r",
+							"    }\r",
+							"    pm.expect(isFound).to.equal(true)\r",
+							"    pm.expect(jsonData).to.be.an(\"array\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://151.80.70.42:3000/api/users",
+					"protocol": "http",
+					"host": [
+						"151",
+						"80",
+						"70",
+						"42"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "EditUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"var guid = require(\"uuid\");\r",
+							"var newname = guid.v4();\r",
+							"var newphone = new Date().getTime();\r",
+							"pm.collectionVariables.set(\"USERNAME\", newname);\r",
+							"pm.collectionVariables.set(\"USERPHONE\", newphone);\r",
+							"console.log(\"newname \" + newname);\r",
+							"console.log(\"newphone \" + newphone);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\": {{USERID}},\r\n    \"name\": \"{{USERNAME}}\",\r\n    \"phone\": \"{{USERPHONE}}\",\r\n    \"role\": \"Student\",\r\n    \"strikes\": \"1\",\r\n    \"location\": \"\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://151.80.70.42:3000/api/users",
+					"protocol": "http",
+					"host": [
+						"151",
+						"80",
+						"70",
+						"42"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetUsersAfterEdit",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							" //   pm.expect(pm.response.code).to.equal(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check response body is array\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.an(\"array\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check user was edited\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    console.log('--------------------')\r",
+							"    var id = pm.collectionVariables.get(\"USERID\");\r",
+							"    var name = pm.collectionVariables.get(\"USERNAME\");\r",
+							"    var phone = pm.collectionVariables.get(\"USERPHONE\");\r",
+							"    console.log(id)\r",
+							"    console.log(name)\r",
+							"    console.log(phone)\r",
+							"    var isFound = false\r",
+							"    for (var i = 0; i < jsonData.length; i = i + 1) {\r",
+							"        // console.log(jsonData[i].id)\r",
+							"        var user = jsonData[i];\r",
+							"        if (user.id == id && user.name == name && user.phone == phone) {\r",
+							"            isFound = true\r",
+							"        }\r",
+							"    }\r",
+							"    pm.expect(isFound).to.equal(true)\r",
+							"    pm.expect(jsonData).to.be.an(\"array\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://151.80.70.42:3000/api/users",
+					"protocol": "http",
+					"host": [
+						"151",
+						"80",
+						"70",
+						"42"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteUser",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "http://151.80.70.42:3000/api/users/{{USERID}}",
+					"protocol": "http",
+					"host": [
+						"151",
+						"80",
+						"70",
+						"42"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users",
+						"{{USERID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetUsersAfterDelete",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							" //   pm.expect(pm.response.code).to.equal(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check response body is array\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.an(\"array\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check user was delete\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    console.log('--------------------')\r",
+							"    var id = pm.collectionVariables.get(\"USERID\");\r",
+							"    var name = pm.collectionVariables.get(\"USERNAME\");\r",
+							"    var phone = pm.collectionVariables.get(\"USERPHONE\");\r",
+							"    console.log(id)\r",
+							"    console.log(name)\r",
+							"    console.log(phone)\r",
+							"    var isFound = false\r",
+							"    for (var i = 0; i < jsonData.length; i = i + 1) {\r",
+							"        // console.log(jsonData[i].id)\r",
+							"        if (jsonData[i].id == id && jsonData[i].name == name && jsonData[i].phone == phone) {\r",
+							"            isFound = true\r",
+							"        }\r",
+							"    }\r",
+							"    pm.expect(isFound).to.equal(false)\r",
+							"    pm.expect(jsonData).to.be.an(\"array\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://151.80.70.42:3000/api/users",
+					"protocol": "http",
+					"host": [
+						"151",
+						"80",
+						"70",
+						"42"
+					],
+					"port": "3000",
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "USERID",
+			"value": ""
+		},
+		{
+			"key": "USERNAME",
+			"value": ""
+		},
+		{
+			"key": "USERPHONE",
+			"value": ""
+		}
+	]
+}
